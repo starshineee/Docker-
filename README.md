@@ -1,3 +1,3 @@
-# Docker-Notes
+# Notes
 
-To record the study of a freshman on docker.
+To record the study of a freshman on linux, docker and machine learing.
