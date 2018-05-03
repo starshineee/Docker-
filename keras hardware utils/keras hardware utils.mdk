@@ -50,6 +50,31 @@
     )
     score = p_model.evaluate(X_test, Y_test, verbose=VERBOSE)
   ```
-  **注意一般**
+   **注意一般较小模型使用多 GPU 处理有可能会使得消耗时间增加**
 
+- 对 tensorflow 的 session 进行设置以控制 GPU 内存占用量
+
+```python
+import os
+import tensorflow as tf
+import keras.backend.tensorflow_backend as KTF
+
+
+def get_session(gpu_fraction=0.3):
+    num_threads = os.environ.get("OMP_NUM_THREADS")
+    gpu_options = tf.GPUOptions(per_process_gpu_memory_fraction=gpu_fraction)
+    if num_threads:
+        return tf.Session(
+            config=tf.ConfigProto(
+                gpu_options=gpu_options, intra_op_parallelism_threads=num_threads
+            )
+        )
+    else:
+        return tf.Session(config=tf.ConfigProto(gpu_options=gpu_options))
+
+KTF.set_session(get_session())
+```
+- 参考 [keras 多 GPU 训练指南]，[tensorflow-gpu 安装]
 [捕获]: images/-.PNG "捕获" { width:auto; max-width:90% }
+[keras 多 GPU 训练指南]: https://yq.aliyun.com/articles/230182
+[tensorflow-gpu 安装]: https://www.tensorflow.org/install/install_linux?hl=zh-cn#InstallingNativePip
